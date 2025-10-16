@@ -33,16 +33,15 @@ main:
 	syscall	
 
 ler_vetor:
-	li $v0, 5
-	syscall
-	move $t0, $v0            # valor lido
+	li $v0, 6
+	syscall			#ler float, resultado em f0
 
-	sw $t0, 0($s0)           # guarda no vetor
+	s.s $f0, 0($s0)		# guarda float no vetor
 
-	addi $s0, $s0, 4         # próximo índice
+	addi $s0, $s0, 4	# próximo índice
 	bne $s0, $s2, ler_vetor
 
-	sub $s0, $s0, $s7       # restaura ponteiro para o início
+	sub $s0, $s0, $s7	# restaura ponteiro para o início
 
 	#imprime matriz
 
@@ -59,11 +58,11 @@ loop_coluna:
 	li $t0, 0	# t0 é o contador de elementos da linha
 
 loop_linha:
-	lw $a0, 0($s0)
-	li $v0, 1
+	l.s $f12, 0($s0)	# carrega float para f12
+	li $v0, 2		# imprime float
 	syscall
 
-	li $a0, 32               # espaço
+	li $a0, 9		# tab
 	li $v0, 11
 	syscall
 
@@ -75,7 +74,7 @@ loop_linha:
 
 	bne $s0, $s2, loop_coluna
 
-	sub $s0, $s0, $s7       # restaura ponteiro para o início
+	sub $s0, $s0, $s7	# restaura ponteiro para o início
 
 	# msg_fim, anuncia o fim do programa
 	la $a0, msg_fim
