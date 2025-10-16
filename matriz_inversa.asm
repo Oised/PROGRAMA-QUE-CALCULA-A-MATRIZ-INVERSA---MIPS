@@ -10,6 +10,7 @@ msg_fim: .asciiz "\n\n--- FIM DO PROGRAMA ---"			# msg p/ o fim do programa
 main:
 	# imprime a msg1 (pede o tamanho da matriz)
 	la $a0, msg1
+	li $v0, 4
 	syscall
 
 	# Recebe n da matriz
