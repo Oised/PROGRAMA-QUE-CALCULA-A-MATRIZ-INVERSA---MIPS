@@ -24,8 +24,8 @@ main:
 
 	move $s0, $gp
 	addi $s0, $s0, 5000      # início do vetor
-	move $s2, $s0
-	add $s2, $s2, $s7        # fim do vetor (n elementos da matriz * 4 bytes)
+	move $s1, $s0
+	add $s1, $s1, $s7        # fim do vetor (n elementos da matriz * 4 bytes)
 
 	# imprime msg2 (pede a matriz)
 	la $a0, msg2	
@@ -39,7 +39,7 @@ ler_vetor:
 	s.s $f0, 0($s0)		# guarda float no vetor
 
 	addi $s0, $s0, 4	# próximo índice
-	bne $s0, $s2, ler_vetor
+	bne $s0, $s1, ler_vetor
 
 	sub $s0, $s0, $s7	# restaura ponteiro para o início
 
@@ -72,9 +72,16 @@ loop_linha:
 			
 	blt $t0, $s6, loop_linha
 
-	bne $s0, $s2, loop_coluna
+	bne $s0, $s1, loop_coluna
 
 	sub $s0, $s0, $s7	# restaura ponteiro para o início
+
+	#inicio do vetor I
+	move $s2, $s1		# início do vetor (matriz identidade)
+	move $s3, $s2
+	add $s3, $s3, $s7	# fim do vetor (n elementos da matriz * 4 bytes)
+cria_i:
+	
 
 	# msg_fim, anuncia o fim do programa
 	la $a0, msg_fim
