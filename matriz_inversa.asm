@@ -2,7 +2,12 @@
 msg1: .asciiz "\nDigite o tamanho da Matriz: "			# msg que pede o tamanho da matriz
 msg2: .asciiz "\nDigite a Matriz, elemento por elemento:\n"	# msg que pede os elementos da matriz
 msg3: .asciiz "\nMatriz inserida:"				# msg p/ imprimir matriz
+msg4: .asciiz "\n\nMatriz inversa:"				# msg p/ imprimir matriz i
+
 msg_fim: .asciiz "\n\n--- FIM DO PROGRAMA ---"			# msg p/ o fim do programa
+
+um:   .float 1.0	# valores auxiliares
+zero: .float 0.0
 
 .text
 .globl main
@@ -76,12 +81,62 @@ loop_linha:
 
 	sub $s0, $s0, $s7	# restaura ponteiro para o início
 
+	l.s $f2, um       # f2 = 1.0
+	l.s $f4, zero     # f4 = 0.0
+
 	#inicio do vetor I
 	move $s2, $s1		# início do vetor (matriz identidade)
 	move $s3, $s2
 	add $s3, $s3, $s7	# fim do vetor (n elementos da matriz * 4 bytes)
+
+	li $t0, 0
 cria_i:
+	s.s $f2, 0($s2)		# escreve 1
+	addi $s2, $s2, 4
+	beq $s2, $s3, fim_i
+
+	li $t0, 0		# contador de zeros
+loop_zeros:
+	s.s $f4, 0($s2)
+	addi $s2, $s2, 4
+	addi $t0, $t0, 1
+	beq  $t0, $s6, cria_i
+	j loop_zeros
+fim_i:
+	sub $s2, $s3, $s7
+
+	#imprime matriz inversa*
+
+	#imprime a msg4
+	la $a0, msg4
+	li $v0, 4
+	syscall
 	
+loop_coluna_i:
+	li $v0, 11	# código para imprimir o char "\n" (10)
+	li $a0, 10
+	syscall
+
+	li $t0, 0	# t0 é o contador de elementos da linha
+
+loop_linha_i:
+	l.s $f12, 0($s2)	# carrega float para f12
+	li $v0, 2		# imprime float
+	syscall
+
+	li $a0, 9		# tab
+	li $v0, 11
+	syscall
+
+	addi $s2, $s2, 4
+
+	addi $t0, $t0, 1
+			
+	blt $t0, $s6, loop_linha_i
+
+	bne $s2, $s3, loop_coluna_i
+
+	sub $s2, $s2, $s7	# restaura ponteiro para o início
 
 	# msg_fim, anuncia o fim do programa
 	la $a0, msg_fim
